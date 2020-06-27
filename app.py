@@ -62,7 +62,7 @@ def output():
     feature = request.form["features"]
     result_plot = get_plot(symbol, feature)
     html = file_html(result_plot, CDN, "myplot")
-    return render_template(html)
+    return render_template('output.html')
     # script, div = components(result_plot)
     # return render_template("output.html", script=script, div=div)
 
