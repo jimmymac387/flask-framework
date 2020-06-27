@@ -1,58 +1,54 @@
-# import simplejson as json
 import requests
 import pandas as pd
-import matplotlib.pyplot as plt
-from bokeh.plotting import figure, output_file, show
-
-alpha_path = "https://www.alphavantage.co/query?"
-function = "function=TIME_SERIES_DAILY_ADJUSTED"
-symbol = "&symbol=" + symbol
-size = "&outputsize=full&datatype=json"
-api_key = "&apikey=FBSJ78DDZA5GWDKW"
-api_request = alpha_path + function + symbol + size + api_key
-
-r = requests.get(api_request)
-response = r.json()
-response
-data = pd.DataFrame.from_dict(response["Time Series (Daily)"], orient="index")
-data = data.sort_index(axis=1)
-data = data.rename(columns={col: col[3:] for col in data.columns})
-data.head()
+from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource
+# from bokeh.embed import components
+# from flask import Flask, render_template, request
 
 
-data
+def get_plot(symbol, feature):
+    # symbol = "GOOG"
+    # feature = "close"
+    alpha_path = "https://www.alphavantage.co/query?"
+    function = "function=TIME_SERIES_DAILY_ADJUSTED"
+    symbol = "&symbol=" + symbol
+    size = "&outputsize=full&datatype=json"
+    api_key = "&apikey=FBSJ78DDZA5GWDKW"
+    api_request = alpha_path + function + symbol + size + api_key
 
-data = pd.read_json(api_request)[6:]
-# t = [v for k, v in (t for t in data["Time Series (5min)"].items() for i in data.items())]
-# [row for row in data["Time Series (5min)"]][0]
+    r = requests.get(api_request)
+    response = r.json()
 
-data
+    data = pd.DataFrame.from_dict(
+        response["Time Series (Daily)"],
+        orient="index"
+    )
 
-# From the internet -----------------------------------------------------------
-# d = {'O1': [{'K1': 1}, {'K2': 2}, {'K3': 3}],
-#      'O2': [{'K1': 4}, {'K2': 5}, {'K3': 6}]}
-# d.items()
-# pd.DataFrame.from_dict(d)
-#
-# d2 = {k: {k: v for d in L for k, v in d.items()} for k, L in d.items()}
-# pd.DataFrame.from_dict(d2)
-# -----------------------------------------------------------------------------
+    data = data.sort_index(axis=1)
+    data = data.rename(columns={col: col[3:] for col in data.columns})
+    data["date"] = pd.to_datetime(data.index)
+    data.columns
 
-data2 = data["Time Series (5min)"].apply(pd.Series)
-data3 = data2.rename(columns={col: col[3:] for col in data2.columns})
+    df = data.astype({
+        'open': 'float',
+        'high': 'float',
+        'low': 'float',
+        'close': 'float',
+        'adjusted close': 'float',
+        'volume': 'int32'
+    })
 
-data3.head()
+    dft = df[{"date", feature}]
 
-p = figure(x_axis_type="datetime")
+    source = ColumnDataSource(dft)
 
-# data.index
-p.line(
-    x=pd.to_datetime(data3.index),
-    y=data3["open"],
-    line_width=1,
-    color="green"
-)
-# data["open"]
+    p = figure()
+    p.line(source, x="date", y=feature)
+    p.title.text = "Daily Stock Price"
+    p.xaxis.axis_label = "Date"
+    p.yaxis.axis_label = feature
 
-show(p)
-data.head()
+    return p
+
+
+get_plot("GOOG", "open")

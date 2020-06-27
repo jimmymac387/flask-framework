@@ -35,7 +35,7 @@ def get_plot(symbol, feature):
         'low': 'float',
         'close': 'float',
         'adjusted close': 'float',
-        'Volume': 'int32'
+        'volume': 'int32'
     })
 
     dft = df[{"date", feature}]
