@@ -25,7 +25,7 @@ def blank():
 
     api_request = alpha_path + function + symbol + interval + api_key
 
-    data = pd.read_json(api_request)
+    data = pd.read_json(api_request)[6:]
 
     data2 = data["Time Series (5min)"].apply(pd.Series)
     data3 = data2.rename(columns={col: col[3:] for col in data2.columns})

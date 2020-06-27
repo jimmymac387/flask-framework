@@ -11,10 +11,11 @@ api_key = "&apikey=FBSJ78DDZA5GWDKW"
 
 api_request = alpha_path + function + symbol + interval + api_key
 
+data = pd.read_json(api_request)[6:]
 # t = [v for k, v in (t for t in data["Time Series (5min)"].items() for i in data.items())]
 # [row for row in data["Time Series (5min)"]][0]
 
-data.head()
+data
 
 # From the internet -----------------------------------------------------------
 # d = {'O1': [{'K1': 1}, {'K2': 2}, {'K3': 3}],
