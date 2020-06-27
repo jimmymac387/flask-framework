@@ -2,3 +2,4 @@ gunicorn
 requests
 pandas
 flask
+bokeh
