@@ -51,6 +51,13 @@ def get_plot(symbol, feature):
     return p
 
 
+def make_html(plot):
+    html = file_html(plot, CDN, "myplot")
+    html = file_html(plot, CDN, "myplot")
+    f = open("./templates/output.html", "w")
+    f.write(html)
+    f.close()
+
 @app.route('/')
 def index():
     return render_template('input.html')
@@ -61,7 +68,7 @@ def output():
     symbol = request.form["ticker"]
     feature = request.form["features"]
     result_plot = get_plot(symbol, feature)
-    html = file_html(result_plot, CDN, "myplot")
+    make_html(result_plot)
     return render_template('output.html')
     # script, div = components(result_plot)
     # return render_template("output.html", script=script, div=div)
