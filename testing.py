@@ -1,15 +1,26 @@
 # import simplejson as json
+import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 from bokeh.plotting import figure, output_file, show
 
 alpha_path = "https://www.alphavantage.co/query?"
-function = "function=TIME_SERIES_INTRADAY"
-symbol = "&symbol=" + "GOOG"
-interval = "&interval=5min"
+function = "function=TIME_SERIES_DAILY_ADJUSTED"
+symbol = "&symbol=" + symbol
+size = "&outputsize=full&datatype=json"
 api_key = "&apikey=FBSJ78DDZA5GWDKW"
+api_request = alpha_path + function + symbol + size + api_key
 
-api_request = alpha_path + function + symbol + interval + api_key
+r = requests.get(api_request)
+response = r.json()
+response
+data = pd.DataFrame.from_dict(response["Time Series (Daily)"], orient="index")
+data = data.sort_index(axis=1)
+data = data.rename(columns={col: col[3:] for col in data.columns})
+data.head()
+
+
+data
 
 data = pd.read_json(api_request)[6:]
 # t = [v for k, v in (t for t in data["Time Series (5min)"].items() for i in data.items())]

@@ -1,5 +1,5 @@
 gunicorn
 requests
 pandas
-flask
 bokeh
+flask
