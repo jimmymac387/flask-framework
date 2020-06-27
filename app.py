@@ -10,6 +10,8 @@ app = Flask(__name__)
 
 
 def get_plot(symbol, feature):
+    # symbol = "GOOG"
+    # feature = "close"
     alpha_path = "https://www.alphavantage.co/query?"
     function = "function=TIME_SERIES_DAILY_ADJUSTED"
     symbol = "&symbol=" + symbol
@@ -40,10 +42,10 @@ def get_plot(symbol, feature):
 
     dft = df[{"date", feature}]
 
-    source = ColumnDataSource(dft)
+    # source = ColumnDataSource(dft)
 
     p = figure()
-    p.line(source, x="date", y=feature)
+    p.line(dft, x="date", y=feature)
     p.title.text = "Daily Stock Price"
     p.xaxis.axis_label = "Date"
     p.yaxis.axis_label = feature

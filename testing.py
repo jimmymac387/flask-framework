@@ -27,7 +27,6 @@ def get_plot(symbol, feature):
     data = data.sort_index(axis=1)
     data = data.rename(columns={col: col[3:] for col in data.columns})
     data["date"] = pd.to_datetime(data.index)
-    data.columns
 
     df = data.astype({
         'open': 'float',
@@ -40,10 +39,10 @@ def get_plot(symbol, feature):
 
     dft = df[{"date", feature}]
 
-    source = ColumnDataSource(dft)
+    # source = ColumnDataSource(dft)
 
     p = figure()
-    p.line(source, x="date", y=feature)
+    p.line(dft, x="date", y=feature)
     p.title.text = "Daily Stock Price"
     p.xaxis.axis_label = "Date"
     p.yaxis.axis_label = feature
