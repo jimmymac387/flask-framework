@@ -1,8 +1,9 @@
 import requests
 import pandas as pd
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource
-from bokeh.embed import components
+# from bokeh.models import ColumnDataSource
+from bokeh.resources import CDN
+from bokeh.embed import file_html
 from flask import Flask, render_template, request
 
 
@@ -63,8 +64,9 @@ def output():
     symbol = request.form["ticker"]
     feature = request.form["features"]
     result_plot = get_plot(symbol, feature)
-    script, div = components(result_plot)
-    return render_template("output.html", script=script, div=div)
+    html = file_html(result_plot, CDN, "myplot")
+    # script, div = components(result_plot)
+    # return render_template("output.html", script=script, div=div)
 
 
 if __name__ == '__main__':
