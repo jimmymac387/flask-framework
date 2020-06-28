@@ -40,8 +40,10 @@ def get_plot(symbol, feature):
         'adjusted close': 'float',
         'volume': 'int32'
     })
+
     df["date"] = pd.to_datetime(df.index)
     dft = df[["date", feature]]
+    # numlines = len(dft.columns - 1)
     source = ColumnDataSource(dft)
     p = figure(x_axis_type="datetime")
     p.line(source=source, x="date", y=feature)
@@ -53,10 +55,10 @@ def get_plot(symbol, feature):
 
 def make_html(plot):
     html = file_html(plot, CDN, "myplot")
-    html = file_html(plot, CDN, "myplot")
     f = open("./templates/output.html", "w")
     f.write(html)
     f.close()
+
 
 @app.route('/')
 def index():

@@ -5,7 +5,8 @@ from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource
 from bokeh.resources import CDN
 from bokeh.embed import file_html
-# from bokeh.embed import components
+from bokeh.embed import components
+from bokeh.palettes import Spectral11
 # from flask import Flask, render_template, request
 
 
@@ -38,20 +39,40 @@ def get_plot(symbol, feature):
         'adjusted close': 'float',
         'volume': 'int32'
     })
+
+    feature = ["open", "close"]
+    features = [f for f in feature]
+    features.append("date")
+    fcol = features
+
     # date = [datetime.datetime.strptime(date, "%Y-%m-%d") for date in dft.index]
     # df["date"] = date
     df["date"] = pd.to_datetime(df.index)
     dft = df[["date", feature]]
+    dft = df[fcol]
+    numlines = len(dft.columns) - 1
+    mypalette = Spectral11[0:numlines]
+
+    p.multi_line(
+        xs=[pd.to_datetime(dft.index.values)] * numlines,
+        ys=[dft[name].values for name in dft.drop(columns="date")],
+        line_color=mypalette,
+        line_width=5
+    )
     source = ColumnDataSource(dft)
     p = figure(x_axis_type="datetime")
     p.line(source=source, x="date", y=feature)
     p.title.text = "Daily Stock Price"
     p.xaxis.axis_label = "Date"
-    p.yaxis.axis_label = feature
+    p.yaxis.axis_label = "Price"
+    show(p)
     return p
 
 
 get_plot("GOOG", "open")
 result_plot = get_plot("GOOG", "open")
-
+# components(result_plot)
 html = file_html(result_plot, CDN, "myplot")
+f = open("./templates/output.html", "w")
+f.write(html)
+f.close()
